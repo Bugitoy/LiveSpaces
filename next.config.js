@@ -4,7 +4,7 @@ const nextConfig = {
   images: {
     domains: ["cdn.builder.io"],
   },
-  // Fix for HMR fetch issues
+  // Simplified webpack config to avoid potential issues
   webpack: (config, { dev, isServer }) => {
     if (dev && !isServer) {
       config.watchOptions = {
@@ -14,10 +14,10 @@ const nextConfig = {
     }
     return config;
   },
-  // Improve development server stability
-  experimental: {
-    webpackBuildWorker: true,
-  },
+  // Temporarily disable experimental features
+  // experimental: {
+  //   webpackBuildWorker: true,
+  // },
 };
 
 module.exports = nextConfig;

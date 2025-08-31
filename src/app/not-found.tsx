@@ -1,10 +1,9 @@
 import Link from "next/link";
-import NextLayout from "@/components/NextLayout";
 import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <NextLayout>
+    <div>
       <div className="min-h-[50vh] flex items-center justify-center">
         <div className="text-center space-y-6">
           <div className="space-y-2">
@@ -32,6 +31,6 @@ export default function NotFound() {
           </div>
         </div>
       </div>
-    </NextLayout>
+    </div>
   );
 }

@@ -5,25 +5,29 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: #ffffff;
+    --foreground: #171717;
+    --font-inter: var(--font-inter);
+    --font-poppins: var(--font-poppins);
+    
+    /* Updated Tailwind CSS variables for blue/indigo theme */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 32 100% 72%;
+    --primary: 217 70% 75%; /* Lighter blue instead of orange */
     --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 48 100% 92%;
+    --secondary: 214 40% 95%; /* Very light blue-gray instead of yellow */
     --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 48 100% 92%;
+    --muted: 214 40% 95%; /* Very light blue-gray instead of yellow */
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 21 100% 76%;
+    --accent: 221 70% 70%; /* Lighter indigo instead of peach */
     --accent-foreground: 222.2 84% 4.9%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
+    --ring: 217 70% 75%; /* Lighter blue ring for focus states */
     --radius: 1rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -32,29 +36,29 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 217.2 70% 75%; /* Lighter blue ring */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: #0a0a0a;
+    --foreground: #ededed;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 217.2 70% 75%; /* Lighter blue primary */
     --primary-foreground: 222.2 47.4% 11.2%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 221 70% 70%; /* Lighter indigo accent */
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 217.2 91.2% 59.8%;
+    --ring: 217.2 70% 75%; /* Lighter blue ring */
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 94.1%;
@@ -62,7 +66,7 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 217.2 70% 75%; /* Lighter blue ring */
   }
 }
 
@@ -70,16 +74,90 @@
   * {
     @apply border-border;
   }
+  
   body {
-    @apply bg-background text-foreground;
-    font-family: "Alata", sans-serif;
-    font-feature-settings:
-      "rlig" 1,
-      "calt" 1;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Typography system */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-poppins), var(--font-inter), sans-serif;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-weight: 600;
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+
+  /* Body text with better readability */
+  p, .body-text {
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+  }
+
+  /* Caption and small text */
+  .caption, small {
+    font-family: var(--font-inter), sans-serif;
+    font-weight: 400;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
   }
 }
 
-@layer utilities {
+@layer components {
+  /* Special styling for headings */
+  .hero-title {
+    font-family: var(--font-poppins), sans-serif;
+    font-weight: 700;
+    font-size: 3.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  .section-title {
+    font-family: var(--font-poppins), sans-serif;
+    font-weight: 600;
+    font-size: 2.25rem;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  /* Button and interactive text */
+  button, .btn {
+    font-family: var(--font-poppins), sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  /* Navigation text */
+  nav, .nav {
+    font-family: var(--font-poppins), sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  /* Custom utility classes */
   .thanodi-gradient {
     @apply bg-gradient-to-br from-blue-50 via-white to-purple-50;
   }
@@ -91,4 +169,241 @@
   .thanodi-button {
     @apply rounded-full px-6 py-3 font-medium transition-all hover:shadow-md;
   }
+
+  /* Enhanced Radix UI component styling for blue theme */
+  [data-radix-select-trigger]:focus,
+  [data-radix-select-trigger]:focus-visible {
+    @apply ring-2 ring-blue-500 ring-offset-2 border-blue-500;
+  }
+
+  [data-radix-select-content] {
+    @apply bg-white border border-gray-200 shadow-lg rounded-lg;
+  }
+
+  [data-radix-select-item]:hover {
+    @apply bg-blue-50 text-blue-900;
+  }
+
+  [data-radix-select-item][data-highlighted] {
+    @apply bg-blue-100 text-blue-900;
+  }
+
+  [data-radix-popover-content] {
+    @apply bg-white border border-gray-200 shadow-lg rounded-lg;
+  }
+
+  [data-radix-dialog-content] {
+    @apply bg-white border border-gray-200 shadow-xl rounded-lg;
+  }
+
+  [data-radix-tabs-trigger][data-state="active"] {
+    @apply text-blue-600 border-b-2 border-blue-600;
+  }
+
+  [data-radix-tabs-trigger]:hover {
+    @apply text-blue-700 bg-blue-50;
+  }
+
+  [data-radix-collapsible-trigger]:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Button focus and hover states */
+  button:focus-visible,
+  .btn:focus-visible {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Input focus states */
+  input:focus,
+  textarea:focus,
+  select:focus {
+    @apply ring-2 ring-blue-500 border-blue-500;
+  }
+
+  /* Checkbox and radio focus states */
+  input[type="checkbox"]:focus,
+  input[type="radio"]:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Slider focus states */
+  [data-radix-slider-thumb]:focus {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Tooltip styling */
+  [data-radix-tooltip-content] {
+    @apply bg-gray-900 text-white px-3 py-2 rounded-md text-sm shadow-lg;
+  }
+
+  /* Dropdown menu styling */
+  [data-radix-dropdown-menu-content] {
+    @apply bg-white border border-gray-200 shadow-lg rounded-lg py-1;
+  }
+
+  [data-radix-dropdown-menu-item]:hover {
+    @apply bg-blue-50 text-blue-900;
+  }
+
+  [data-radix-dropdown-menu-item][data-highlighted] {
+    @apply bg-blue-100 text-blue-900;
+  }
+
+  /* Command palette styling */
+  [data-radix-command-input]:focus {
+    @apply ring-2 ring-blue-500 border-blue-500;
+  }
+
+  [data-radix-command-item]:hover {
+    @apply bg-blue-50 text-blue-900;
+  }
+
+  [data-radix-command-item][data-selected] {
+    @apply bg-blue-100 text-blue-900;
+  }
+
+  /* STRONG OVERRIDES for Select component to fix peach background issue */
+  [data-radix-select-item] {
+    background-color: transparent !important;
+  }
+
+  [data-radix-select-item]:hover {
+    background-color: rgb(239 246 255) !important; /* bg-blue-50 - very light blue */
+    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
+  }
+
+  [data-radix-select-item][data-highlighted] {
+    background-color: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
+    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
+  }
+
+  [data-radix-select-item][data-state="checked"] {
+    background-color: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
+    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
+  }
+
+  /* Force override any CSS custom properties that might be causing peach colors */
+  :root {
+    --radix-select-item-bg: rgb(239 246 255) !important; /* bg-blue-50 - very light blue */
+    --radix-select-item-color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
+    --radix-select-item-hover-bg: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
+    --radix-select-item-hover-color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
+  }
+
+  /* Additional overrides for any remaining orange/peach colors */
+  .bg-orange-500,
+  .bg-orange-600,
+  .bg-orange-700,
+  .bg-orange-800,
+  .bg-orange-900 {
+    @apply bg-blue-500;
+  }
+
+  .bg-orange-50,
+  .bg-orange-100,
+  .bg-orange-200,
+  .bg-orange-300,
+  .bg-orange-400 {
+    @apply bg-blue-50;
+  }
+
+  .text-orange-500,
+  .text-orange-600,
+  .text-orange-700,
+  .text-orange-800,
+  .text-orange-900 {
+    @apply text-blue-600;
+  }
+
+  .text-orange-50,
+  .text-orange-100,
+  .text-orange-200,
+  .text-orange-300,
+  .text-orange-400 {
+    @apply text-blue-400;
+  }
+
+  .border-orange-500,
+  .border-orange-600,
+  .border-orange-700,
+  .border-orange-800,
+  .border-orange-900 {
+    @apply border-blue-500;
+  }
+
+  .border-orange-50,
+  .border-orange-100,
+  .border-orange-200,
+  .border-orange-300,
+  .border-orange-400 {
+    @apply border-blue-200;
+  }
+
+  .ring-orange-500,
+  .ring-orange-600,
+  .ring-orange-700,
+  .ring-orange-800,
+  .ring-orange-900 {
+    @apply ring-blue-500;
+  }
+
+  .ring-orange-50,
+  .ring-orange-100,
+  .ring-orange-200,
+  .ring-orange-300,
+  .ring-orange-400 {
+    @apply ring-blue-200;
+  }
+
+  /* Peach color overrides */
+  .bg-amber-500,
+  .bg-amber-600,
+  .bg-amber-700,
+  .bg-amber-800,
+  .bg-amber-900 {
+    @apply bg-indigo-500;
+  }
+
+  .bg-amber-50,
+  .bg-amber-100,
+  .bg-amber-200,
+  .bg-amber-300,
+  .bg-amber-400 {
+    @apply bg-indigo-50;
+  }
+
+  .text-amber-500,
+  .text-amber-600,
+  .text-amber-700,
+  .text-amber-800,
+  .text-amber-900 {
+    @apply text-indigo-600;
+  }
+
+  .text-amber-50,
+  .text-amber-100,
+  .text-amber-200,
+  .text-amber-300,
+  .text-amber-400 {
+    @apply text-indigo-400;
+  }
+
+  /* Focus ring overrides for all interactive elements */
+  *:focus-visible {
+    @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Hover state overrides */
+  button:hover:not(:disabled),
+  .btn:hover:not(:disabled) {
+    @apply bg-blue-600 text-white;
+  }
+
+  button:active:not(:disabled),
+  .btn:active:not(:disabled) {
+    @apply bg-blue-700;
+  }
+
+
 }
