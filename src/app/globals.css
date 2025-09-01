@@ -15,7 +15,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 217 70% 75%; /* Lighter blue instead of orange */
+    --primary: 217 70% 85%; /* Much lighter blue instead of orange */
     --primary-foreground: 222.2 84% 4.9%;
     --secondary: 214 40% 95%; /* Very light blue-gray instead of yellow */
     --secondary-foreground: 222.2 84% 4.9%;
@@ -212,6 +212,12 @@
   button:focus-visible,
   .btn:focus-visible {
     @apply ring-2 ring-blue-500 ring-offset-2;
+  }
+
+  /* Specific override for Send Message button to prevent deep blue hover */
+  button.bg-blue-50:hover {
+    background-color: rgb(219 234 254) !important; /* bg-blue-100 */
+    color: rgb(29 78 216) !important; /* text-blue-700 */
   }
 
   /* Input focus states */

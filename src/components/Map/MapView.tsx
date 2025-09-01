@@ -76,9 +76,14 @@ const sampleProperties = [
 
 interface MapViewProps {
   showPropertyPopup?: boolean
+  focusedProperty?: {
+    latitude: number
+    longitude: number
+    zoom?: number
+  }
 }
 
-export function MapView({ showPropertyPopup = true }: MapViewProps) {
+export function MapView({ showPropertyPopup = true, focusedProperty }: MapViewProps) {
   const [selectedProperty, setSelectedProperty] = useState<any>(null)
 
   return (
@@ -87,6 +92,7 @@ export function MapView({ showPropertyPopup = true }: MapViewProps) {
       <MapComponent 
         properties={sampleProperties}
         onPropertySelect={setSelectedProperty}
+        focusedProperty={focusedProperty}
       />
       
       {/* Property Details Popup */}

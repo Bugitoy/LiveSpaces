@@ -215,8 +215,15 @@ export default function PropertyPostPage({ params }: { params: { id: string } })
               {/* Map */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 mb-3">Location</h3>
-                <div className="h-64 rounded-lg overflow-hidden">
-                  <MapView showPropertyPopup={false} />
+                <div className="h-96 rounded-lg overflow-hidden">
+                  <MapView 
+                    showPropertyPopup={false} 
+                    focusedProperty={{
+                      latitude: sampleProperty.latitude,
+                      longitude: sampleProperty.longitude,
+                      zoom: 15 // Zoom in to street level
+                    }}
+                  />
                 </div>
               </div>
             </div>
@@ -244,7 +251,7 @@ export default function PropertyPostPage({ params }: { params: { id: string } })
                   <Phone className="h-4 w-4 mr-2" />
                   Call Agent
                 </button>
-                <button className="w-full bg-gray-100 text-gray-900 py-3 px-4 rounded-lg hover:bg-gray-200 transition-colors font-medium flex items-center justify-center">
+                <button className="w-full bg-blue-50 text-blue-700 py-3 px-4 rounded-lg hover:bg-blue-100 transition-colors font-medium flex items-center justify-center border border-blue-200">
                   <Mail className="h-4 w-4 mr-2" />
                   Send Message
                 </button>
@@ -263,14 +270,22 @@ export default function PropertyPostPage({ params }: { params: { id: string } })
                   <span className="text-gray-600">Posted</span>
                   <span className="font-medium text-gray-900">
                     <Calendar className="h-4 w-4 inline mr-1" />
-                    {new Date(sampleProperty.postedDate).toLocaleDateString()}
+                    {new Date(sampleProperty.postedDate).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Available From</span>
                   <span className="font-medium text-gray-900">
                     <Calendar className="h-4 w-4 inline mr-1" />
-                    {new Date(sampleProperty.availableFrom).toLocaleDateString()}
+                    {new Date(sampleProperty.availableFrom).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between">

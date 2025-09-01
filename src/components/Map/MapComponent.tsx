@@ -29,6 +29,11 @@ interface Property {
 interface MapComponentProps {
   properties: Property[]
   onPropertySelect: (property: Property) => void
+  focusedProperty?: {
+    latitude: number
+    longitude: number
+    zoom?: number
+  }
 }
 
 // Sample property data with coordinates
@@ -87,7 +92,7 @@ const sampleProperties = [
   }
 ]
 
-export default function MapComponent({ properties, onPropertySelect }: MapComponentProps) {
+export default function MapComponent({ properties, onPropertySelect, focusedProperty }: MapComponentProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const markersRef = useRef<L.Marker[]>([])
@@ -95,8 +100,12 @@ export default function MapComponent({ properties, onPropertySelect }: MapCompon
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return
 
-    // Initialize map
-    const map = L.map(mapRef.current).setView([-24.6282, 25.9231], 4) // Center of Botswana
+    // Initialize map with focused property or default to Botswana center
+    const initialLat = focusedProperty?.latitude || -24.6282
+    const initialLng = focusedProperty?.longitude || 25.9231
+    const initialZoom = focusedProperty?.zoom || 4
+    
+    const map = L.map(mapRef.current).setView([initialLat, initialLng], initialZoom)
     mapInstanceRef.current = map
 
     // Add tile layer (OpenStreetMap)
@@ -162,8 +171,8 @@ export default function MapComponent({ properties, onPropertySelect }: MapCompon
       markersRef.current.push(marker)
     })
 
-    // Fit map to show all markers
-    if (properties.length > 0) {
+    // Fit map to show all markers only if no focused property
+    if (properties.length > 0 && !focusedProperty) {
       const group = L.featureGroup(markersRef.current)
       map.fitBounds(group.getBounds().pad(0.1))
     }
@@ -174,7 +183,7 @@ export default function MapComponent({ properties, onPropertySelect }: MapCompon
         mapInstanceRef.current = null
       }
     }
-  }, [properties, onPropertySelect])
+  }, [properties, onPropertySelect, focusedProperty])
 
   return (
     <div 
