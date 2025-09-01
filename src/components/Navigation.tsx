@@ -2,17 +2,23 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Search, MessageCircle, User, Menu, X, Home, Building2, Heart } from 'lucide-react'
+import { Search, MessageCircle, User, Menu, X, Home, Building2, Heart, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Properties', href: '/properties', icon: Building2 },
     { name: 'Messages', href: '/messages', icon: MessageCircle },
     { name: 'Favorites', href: '/favorites', icon: Heart },
+  ]
+
+  const accountMenuItems = [
+    { name: 'Profile', href: '/profile', icon: User },
+    { name: 'My Listings', href: '/my-listings', icon: Building2 },
   ]
 
   return (
@@ -43,19 +49,35 @@ export function Navigation() {
             </div>
           </div>
 
-          {/* Search Bar */}
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search properties..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64"
-              />
+          {/* Account Dropdown */}
+          <div className="hidden md:block">
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsAccountDropdownOpen(true)}
+              onMouseLeave={() => setIsAccountDropdownOpen(false)}
+            >
+              <button className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 w-40 justify-center">
+                <User className="h-4 w-4" />
+                <span>Account</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
+              
+              {/* Dropdown Menu */}
+              {isAccountDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                  {accountMenuItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
-            <button className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              login
-            </button>
           </div>
 
           {/* Mobile menu button */}
@@ -89,16 +111,27 @@ export function Navigation() {
                 <span>{item.name}</span>
               </Link>
             ))}
+            
+            {/* Mobile Account Menu */}
             <div className="pt-4 border-t border-gray-200">
-              <div className="relative px-3 py-2">
-                <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search properties..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full"
-                />
+              <div className="px-3 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Account
               </div>
-              <button className="btn w-full mt-3 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+              {accountMenuItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors flex items-center space-x-2"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <item.icon className="h-4 w-4" />
+                  <span>{item.name}</span>
+                </Link>
+              ))}
+            </div>
+            
+            <div className="pt-4 border-t border-gray-200">
+              <button className="btn w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                 Sign In
               </button>
             </div>
