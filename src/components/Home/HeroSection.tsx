@@ -184,23 +184,31 @@ export function HeroSection() {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="minPrice">Min Price</Label>
-                          <Input
-                            id="minPrice"
-                            type="number"
-                            placeholder="0"
-                            value={advancedFilters.minPrice}
-                            onChange={(e) => setAdvancedFilters({...advancedFilters, minPrice: e.target.value})}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10">P</span>
+                            <Input
+                              id="minPrice"
+                              type="number"
+                              placeholder="0"
+                              value={advancedFilters.minPrice}
+                              onChange={(e) => setAdvancedFilters({...advancedFilters, minPrice: e.target.value})}
+                              className="pl-8"
+                            />
+                          </div>
                         </div>
                         <div>
                           <Label htmlFor="maxPrice">Max Price</Label>
-                          <Input
-                            id="maxPrice"
-                            type="number"
-                            placeholder="No limit"
-                            value={advancedFilters.maxPrice}
-                            onChange={(e) => setAdvancedFilters({...advancedFilters, maxPrice: e.target.value})}
-                          />
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10">P</span>
+                            <Input
+                              id="maxPrice"
+                              type="number"
+                              placeholder="No limit"
+                              value={advancedFilters.maxPrice}
+                              onChange={(e) => setAdvancedFilters({...advancedFilters, maxPrice: e.target.value})}
+                              className="pl-8"
+                            />
+                          </div>
                         </div>
                       </div>
                       

@@ -62,7 +62,7 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
-        thanodi: {
+        livespaces: {
           cream: "#FFECD2",
           yellow: "#F7D379",
           blue: "#C4D6E7",

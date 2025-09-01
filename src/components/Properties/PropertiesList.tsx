@@ -204,7 +204,7 @@ export function PropertiesList() {
 
               <div className="flex items-center justify-between mb-3">
                 <div className="text-2xl font-bold text-gray-900">
-                  {property.type === 'rent' ? property.price + '/mo' : property.price}
+                  {property.type === 'rent' ? `P${property.price.toLocaleString()}/mo` : `P${property.price.toLocaleString()}`}
                 </div>
                 <div className="flex items-center text-sm">
                   <Star className="h-4 w-4 text-yellow-400 mr-1" />

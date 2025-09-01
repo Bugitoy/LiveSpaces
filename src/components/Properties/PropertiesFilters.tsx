@@ -101,7 +101,7 @@ export function PropertiesFilters() {
             <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Search locations in Botswana..."
+              placeholder="Search for locations"
               value={locationSearch}
               onChange={(e) => {
                 setLocationSearch(e.target.value)
@@ -138,21 +138,27 @@ export function PropertiesFilters() {
         <h4 className="font-medium text-gray-900 mb-3">Price Range</h4>
         <div className="space-y-2">
           <div className="flex items-center space-x-2 text-gray-900">
-            <input
-              type="number"
-              placeholder="Min"
-              value={priceRange[0]}
-              onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
-            />
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
+              <input
+                type="number"
+                placeholder="Min"
+                value={priceRange[0]}
+                onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
+              />
+            </div>
             <span className="text-gray-500">to</span>
-            <input
-              type="number"
-              placeholder="Max"
-              value={priceRange[1]}
-              onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 10000])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
-            />
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
+              <input
+                type="number"
+                placeholder="Max"
+                value={priceRange[1]}
+                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 10000])}
+                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
+              />
+            </div>
           </div>
         </div>
       </div>

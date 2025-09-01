@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, MapPin, Building2, DollarSign, Bed, Bath, Car, Wifi, Shield, Home, Filter } from 'lucide-react'
+import { Search, MapPin, Building2, Tag, Bed, Bath, Car, Wifi, Shield, Home, Filter } from 'lucide-react'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -104,7 +104,7 @@ export function SearchSection() {
                   </Select>
                 </div>
                 <div className="relative">
-                  <DollarSign className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
+                  <Tag className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 z-10" />
                   <Input
                     type="number"
                     placeholder="Max Price"
@@ -251,16 +251,22 @@ export function SearchSection() {
                             <Label>Price Range</Label>
                             <div className="mt-2 space-y-4">
                               <div className="grid grid-cols-2 gap-4">
-                                <Input
-                                  type="number"
-                                  placeholder="Min Price"
-                                  className="w-full"
-                                />
-                                <Input
-                                  type="number"
-                                  placeholder="Max Price"
-                                  className="w-full"
-                                />
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10">P</span>
+                                  <Input
+                                    type="number"
+                                    placeholder="Min Price"
+                                    className="w-full pl-8"
+                                  />
+                                </div>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 z-10">P</span>
+                                  <Input
+                                    type="number"
+                                    placeholder="Max Price"
+                                    className="w-full pl-8"
+                                  />
+                                </div>
                               </div>
                               <Slider
                                 defaultValue={[0, 1000000]}

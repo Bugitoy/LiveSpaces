@@ -155,6 +155,17 @@ export default function PropertyPostPage({ params }: { params: { id: string } })
                 </div>
               </div>
 
+              {/* Price */}
+              <div className="mb-6">
+                <div className="text-3xl font-bold text-gray-900 mb-2">
+                  P{sampleProperty.price.toLocaleString()}
+                  {sampleProperty.type === 'rent' && '/mo'}
+                </div>
+                <div className="text-sm text-gray-600">
+                  {sampleProperty.type === 'rent' ? 'Monthly Rent' : 'Sale Price'}
+                </div>
+              </div>
+
               {/* Key Features */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">

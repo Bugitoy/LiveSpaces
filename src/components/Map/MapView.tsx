@@ -110,7 +110,7 @@ export function MapView({ showPropertyPopup = true }: MapViewProps) {
             
             <div className="flex items-center justify-between">
               <span className="text-2xl font-bold text-gray-900">
-                ${selectedProperty.price.toLocaleString()}
+                P${selectedProperty.price.toLocaleString()}
                 {selectedProperty.type === 'rent' && '/mo'}
               </span>
               <span className={`px-2 py-1 text-xs font-semibold rounded-full ${

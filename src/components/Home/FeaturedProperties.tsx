@@ -238,7 +238,7 @@ export function FeaturedProperties() {
                   {/* Price and CTA */}
                   <div className="flex items-center justify-between">
                     <div className="text-2xl font-bold text-gray-900">
-                      {property.status === 'For Rent' ? `$${property.price}/mo` : `$${property.price.toLocaleString()}`}
+                      {property.status === 'For Rent' ? `P${property.price}/mo` : `P${property.price.toLocaleString()}`}
                     </div>
                     <Button asChild size="sm" className="px-6 py-6 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition-colors duration-300">
                       <Link href={`/properties/${property.id}`}>

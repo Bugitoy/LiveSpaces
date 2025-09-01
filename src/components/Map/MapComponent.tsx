@@ -133,7 +133,7 @@ export default function MapComponent({ properties, onPropertySelect }: MapCompon
             <p style="margin: 0 0 8px 0; color: #666;">${property.address}</p>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
               <span style="font-size: 18px; font-weight: bold; color: #111;">
-                $${property.price.toLocaleString()}
+                P${property.price.toLocaleString()}
                 ${property.type === 'rent' ? '/mo' : ''}
               </span>
               <span style="
