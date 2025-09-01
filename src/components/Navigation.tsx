@@ -4,8 +4,10 @@ import Link from 'next/link'
 import { useState, useRef, useEffect } from 'react'
 import { Search, MessageCircle, User, Menu, X, Home, Building2, Heart, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export function Navigation() {
+  const { data: session, status } = useSession()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -80,41 +82,51 @@ export function Navigation() {
             </div>
           </div>
 
-          {/* Account Dropdown */}
+          {/* Account / Login */}
           <div className="hidden md:block">
-            <div 
-              className="relative"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
+            {status === 'authenticated' ? (
+              <div 
+                className="relative"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+              >
+                <button 
+                  ref={buttonRef}
+                  className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 w-40 justify-center"
+                >
+                  <User className="h-4 w-4" />
+                  <span>Account</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+                
+                {/* Dropdown Menu */}
+                {isAccountDropdownOpen && (
+                  <div 
+                    ref={dropdownRef}
+                    className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                  >
+                    {accountMenuItems.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
+                      >
+                        <item.icon className="h-4 w-4" />
+                        <span>{item.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
               <button 
-                ref={buttonRef}
+                onClick={() => signIn('google')}
                 className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 w-40 justify-center"
               >
                 <User className="h-4 w-4" />
-                <span>Account</span>
-                <ChevronDown className="h-4 w-4" />
+                <span>Sign In</span>
               </button>
-              
-              {/* Dropdown Menu */}
-              {isAccountDropdownOpen && (
-                <div 
-                  ref={dropdownRef}
-                  className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
-                >
-                  {accountMenuItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center space-x-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
-                    >
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -149,29 +161,39 @@ export function Navigation() {
               </Link>
             ))}
             
-            {/* Mobile Account Menu */}
-            <div className="pt-4 border-t border-gray-200">
-              <div className="px-3 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
-                Account
-              </div>
-              {accountMenuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors flex items-center space-x-2"
-                  onClick={() => setIsMenuOpen(false)}
+            {status === 'authenticated' ? (
+              <div className="pt-4 border-t border-gray-200">
+                <div className="px-3 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  Account
+                </div>
+                {accountMenuItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="text-gray-600 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors flex items-center space-x-2"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+                <button
+                  onClick={() => signOut()}
+                  className="w-full text-left px-3 py-2 text-base text-gray-700 hover:bg-gray-100 hover:text-blue-600 transition-colors"
                 >
-                  <item.icon className="h-4 w-4" />
-                  <span>{item.name}</span>
-                </Link>
-              ))}
-            </div>
-            
-            <div className="pt-4 border-t border-gray-200">
-              <button className="btn w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                Sign In
-              </button>
-            </div>
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="pt-4 border-t border-gray-200">
+                <button 
+                  onClick={() => signIn('google')}
+                  className="btn w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign In
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
