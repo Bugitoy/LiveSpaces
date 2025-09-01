@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Heart, MapPin, Bed, Bath, Square, Star, Grid, List } from 'lucide-react'
+import { Heart, MapPin, Bed, Bath, Square, Star, Grid, List, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 
 // Sample data - in a real app this would come from the database
@@ -16,7 +16,11 @@ const sampleProperties = [
     bedrooms: 2,
     bathrooms: 2,
     area: 1200,
-    image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
+    images: [
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448205-17d3a46c84de?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D',
+      'https://images.unsplash.com/photo-1725905803121-dd123b058a5c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8a2l0Y2hlbiUyMGludGVyaW9yfGVufDB8fDB8fHww'
+    ],
     rating: 4.8,
     reviews: 24,
     featured: true
@@ -31,7 +35,11 @@ const sampleProperties = [
     bedrooms: 4,
     bathrooms: 3,
     area: 2200,
-    image: 'https://images.unsplash.com/photo-1718150997685-6a20748d4973?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    images: [
+      'https://images.unsplash.com/photo-1718150997685-6a20748d4973?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1564013796-729b203e9a76?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop'
+    ],
     rating: 4.9,
     reviews: 31,
     featured: true
@@ -46,7 +54,11 @@ const sampleProperties = [
     bedrooms: 1,
     bathrooms: 1,
     area: 900,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448205-17d3a46c84de?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D'
+    ],
     rating: 4.7,
     reviews: 18,
     featured: true
@@ -61,7 +73,11 @@ const sampleProperties = [
     bedrooms: 3,
     bathrooms: 2.5,
     area: 1800,
-    image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+    images: [
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1564013796-729b203e9a76?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1718150997685-6a20748d4973?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+    ],
     rating: 4.6,
     reviews: 22,
     featured: true
@@ -76,7 +92,11 @@ const sampleProperties = [
     bedrooms: 1,
     bathrooms: 1,
     area: 750,
-    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',
+    images: [
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1725905803121-dd123b058a5c?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8a2l0Y2hlbiUyMGludGVyaW9yfGVufDB8fDB8fHww'
+    ],
     rating: 4.5,
     reviews: 15,
     featured: false
@@ -91,7 +111,11 @@ const sampleProperties = [
     bedrooms: 5,
     bathrooms: 4,
     area: 2800,
-    image: 'https://images.unsplash.com/photo-1649083048337-4aeb6dda80bb?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+    images: [
+      'https://images.unsplash.com/photo-1649083048337-4aeb6dda80bb?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'https://images.unsplash.com/photo-1564013796-729b203e9a76?w=800&h=600&fit=crop',
+      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop'
+    ],
     rating: 4.7,
     reviews: 28,
     featured: false
@@ -102,6 +126,21 @@ export function PropertiesList() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [currentPage, setCurrentPage] = useState(1)
   const propertiesPerPage = 6
+  const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({})
+
+  const nextImage = (propertyId: string, totalImages: number) => {
+    setImageIndices(prev => ({
+      ...prev,
+      [propertyId]: ((prev[propertyId] || 0) + 1) % totalImages
+    }))
+  }
+
+  const prevImage = (propertyId: string, totalImages: number) => {
+    setImageIndices(prev => ({
+      ...prev,
+      [propertyId]: prev[propertyId] === 0 ? totalImages - 1 : (prev[propertyId] || 0) - 1
+    }))
+  }
 
   const totalPages = Math.ceil(sampleProperties.length / propertiesPerPage)
   const startIndex = (currentPage - 1) * propertiesPerPage
@@ -151,15 +190,45 @@ export function PropertiesList() {
           <div key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
             viewMode === 'list' ? 'flex' : ''
           }`}>
-            {/* Property Image */}
+            {/* Property Image Carousel */}
             <div className={`relative overflow-hidden ${
               viewMode === 'list' ? 'w-1/3 h-48' : 'h-48'
             }`}>
               <img
-                src={property.image}
+                src={property.images[imageIndices[property.id] || 0]}
                 alt={property.title}
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
+              
+              {/* Carousel Navigation Arrows */}
+              {property.images.length > 1 && (
+                <>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      prevImage(property.id, property.images.length)
+                    }}
+                    className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors shadow-md"
+                  >
+                    <ChevronLeft className="h-4 w-4 text-gray-700" />
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      nextImage(property.id, property.images.length)
+                    }}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-white/80 rounded-full hover:bg-white transition-colors shadow-md"
+                  >
+                    <ChevronRight className="h-4 w-4 text-gray-700" />
+                  </button>
+                  
+                  {/* Image Counter */}
+                  <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+                    {(imageIndices[property.id] || 0) + 1} / {property.images.length}
+                  </div>
+                </>
+              )}
+              
               <div className="absolute top-3 left-3">
                 <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                   property.type === 'rent' 
