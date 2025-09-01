@@ -1,8 +1,17 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, MapPin, Bed, Bath, Square, Star, Grid, List, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+
+interface PropertiesListProps {
+  filters?: {
+    propertyStatus: 'all' | 'rent' | 'sale'
+    selectedTypes: string[]
+    locationSearch: string
+    priceRange: number[]
+  }
+}
 
 // Sample data - in a real app this would come from the database
 const sampleProperties = [
@@ -134,11 +143,45 @@ const sampleProperties = [
   }
 ]
 
-export function PropertiesList() {
+export function PropertiesList({ filters }: PropertiesListProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [currentPage, setCurrentPage] = useState(1)
   const propertiesPerPage = 6
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({})
+
+  // Apply filters to properties
+  const filteredProperties = sampleProperties.filter(property => {
+    // Filter by property status (rent/sale)
+    if (filters?.propertyStatus && filters.propertyStatus !== 'all') {
+      if (filters.propertyStatus === 'rent' && property.type !== 'rent') return false
+      if (filters.propertyStatus === 'sale' && property.type !== 'sale') return false
+    }
+
+    // Filter by property types
+    if (filters?.selectedTypes && filters.selectedTypes.length > 0) {
+      // For now, we'll use a simple mapping since our sample data doesn't have property types
+      // In a real app, you'd have property.type matching the selected types
+      const propertyType = property.type === 'rent' ? 'apartment' : 'house' // Simple mapping
+      if (!filters.selectedTypes.includes(propertyType)) return false
+    }
+
+    // Filter by location
+    if (filters?.locationSearch && filters.locationSearch.trim() !== '') {
+      const searchLocation = filters.locationSearch.toLowerCase()
+      if (!property.city.toLowerCase().includes(searchLocation) && 
+          !property.address.toLowerCase().includes(searchLocation)) {
+        return false
+      }
+    }
+
+    // Filter by price range
+    if (filters?.priceRange && filters.priceRange.length === 2) {
+      const [minPrice, maxPrice] = filters.priceRange
+      if (property.price < minPrice || property.price > maxPrice) return false
+    }
+
+    return true
+  })
 
   const nextImage = (propertyId: string, totalImages: number) => {
     setImageIndices(prev => ({
@@ -154,20 +197,30 @@ export function PropertiesList() {
     }))
   }
 
-  const totalPages = Math.ceil(sampleProperties.length / propertiesPerPage)
+  const totalPages = Math.ceil(filteredProperties.length / propertiesPerPage)
   const startIndex = (currentPage - 1) * propertiesPerPage
   const endIndex = startIndex + propertiesPerPage
-  const currentProperties = sampleProperties.slice(startIndex, endIndex)
+  const currentProperties = filteredProperties.slice(startIndex, endIndex)
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters?.propertyStatus, filters?.selectedTypes, filters?.locationSearch, filters?.priceRange])
 
   return (
     <div>
       {/* Header with view toggle and results count */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-        <div className="mb-4 sm:mb-0">
-          <p className="text-gray-600">
-            Showing {startIndex + 1}-{Math.min(endIndex, sampleProperties.length)} of {sampleProperties.length} properties
-          </p>
-        </div>
+                  <div className="mb-4 sm:mb-0">
+            <p className="text-gray-600">
+              Showing {startIndex + 1}-{Math.min(endIndex, filteredProperties.length)} of {filteredProperties.length} properties
+              {filters?.propertyStatus && filters.propertyStatus !== 'all' && (
+                <span className="ml-2 text-blue-600 font-medium">
+                  ({filters.propertyStatus === 'rent' ? 'For Rent' : 'For Sale'})
+                </span>
+              )}
+            </p>
+          </div>
         
         <div className="flex items-center space-x-2">
           <button
@@ -194,11 +247,24 @@ export function PropertiesList() {
       </div>
 
       {/* Properties Grid/List */}
-      <div className={viewMode === 'grid' 
-        ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-        : 'space-y-4'
-      }>
-        {currentProperties.map((property) => (
+      {filteredProperties.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-gray-400 mb-4">
+            <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+          </div>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No properties found</h3>
+          <p className="text-gray-600 mb-4">
+            Try adjusting your filters or search criteria
+          </p>
+        </div>
+      ) : (
+        <div className={viewMode === 'grid' 
+          ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+          : 'space-y-4'
+        }>
+          {currentProperties.map((property) => (
           <div key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
             viewMode === 'list' ? 'flex' : ''
           }`}>
@@ -303,7 +369,8 @@ export function PropertiesList() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
 
       {/* Pagination */}
       {totalPages > 1 && (

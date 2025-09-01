@@ -220,6 +220,28 @@
     color: rgb(29 78 216) !important; /* text-blue-700 */
   }
 
+  /* Dialog backdrop styling */
+  [data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Additional Dialog backdrop overrides */
+  .fixed.inset-0 {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Force dark backdrop for any dialog overlay */
+  [role="dialog"] {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+  }
+
+  /* Target the specific overlay element */
+  [data-state="open"][data-radix-dialog-overlay] {
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px);
+  }
+
   /* Input focus states */
   input:focus,
   textarea:focus,

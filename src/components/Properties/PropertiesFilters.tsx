@@ -3,12 +3,81 @@
 import { useState, useEffect, useRef } from 'react'
 import { Filter, MapPin } from 'lucide-react'
 
-export function PropertiesFilters() {
-  const [priceRange, setPriceRange] = useState([0, 10000])
+interface PropertiesFiltersProps {
+  onFiltersChange?: (filters: {
+    propertyStatus: 'all' | 'rent' | 'sale'
+    selectedTypes: string[]
+    locationSearch: string
+    priceRange: number[]
+  }) => void
+}
+
+export function PropertiesFilters({ onFiltersChange }: PropertiesFiltersProps) {
+  const [priceRange, setPriceRange] = useState([0, 1000000])
   const [selectedTypes, setSelectedTypes] = useState<string[]>([])
   const [locationSearch, setLocationSearch] = useState('')
   const [showLocationDropdown, setShowLocationDropdown] = useState(false)
+  const [propertyStatus, setPropertyStatus] = useState<'all' | 'rent' | 'sale'>('all')
   const locationRef = useRef<HTMLDivElement>(null)
+
+  // Remove the problematic useEffect that was overriding initial state
+  // The parent component should handle the initial filter state
+
+  // Only call onFiltersChange when user actually changes filters
+  const handlePropertyStatusChange = (status: 'all' | 'rent' | 'sale') => {
+    setPropertyStatus(status)
+    if (onFiltersChange) {
+      onFiltersChange({
+        propertyStatus: status,
+        selectedTypes,
+        locationSearch,
+        priceRange
+      })
+    }
+  }
+
+  const handleTypeChange = (type: string) => {
+    const newSelectedTypes = selectedTypes.includes(type) 
+      ? selectedTypes.filter(t => t !== type)
+      : [...selectedTypes, type]
+    
+    setSelectedTypes(newSelectedTypes)
+    if (onFiltersChange) {
+      onFiltersChange({
+        propertyStatus,
+        selectedTypes: newSelectedTypes,
+        locationSearch,
+        priceRange
+      })
+    }
+  }
+
+  const handleLocationChange = (location: string) => {
+    setLocationSearch(location)
+    setShowLocationDropdown(false)
+    if (onFiltersChange) {
+      onFiltersChange({
+        propertyStatus,
+        selectedTypes,
+        locationSearch: location,
+        priceRange
+      })
+    }
+  }
+
+  const handlePriceRangeChange = (newPriceRange: number[]) => {
+    setPriceRange(newPriceRange)
+    if (onFiltersChange) {
+      onFiltersChange({
+        propertyStatus,
+        selectedTypes,
+        locationSearch,
+        priceRange: newPriceRange
+      })
+    }
+  }
+
+
 
   const propertyTypes = [
     { value: 'house', label: 'House' },
@@ -59,23 +128,27 @@ export function PropertiesFilters() {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const handleTypeChange = (type: string) => {
-    if (selectedTypes.includes(type)) {
-      setSelectedTypes(selectedTypes.filter(t => t !== type))
-    } else {
-      setSelectedTypes([...selectedTypes, type])
-    }
-  }
+
 
   const selectLocation = (location: string) => {
-    setLocationSearch(location)
-    setShowLocationDropdown(false)
+    handleLocationChange(location)
   }
 
   const clearFilters = () => {
-    setPriceRange([0, 10000])
+    setPriceRange([0, 1000000])
     setSelectedTypes([])
     setLocationSearch('')
+    setPropertyStatus('all')
+    
+    // Also notify parent component of the cleared filters
+    if (onFiltersChange) {
+      onFiltersChange({
+        propertyStatus: 'all',
+        selectedTypes: [],
+        locationSearch: '',
+        priceRange: [0, 1000000]
+      })
+    }
   }
 
   return (
@@ -106,6 +179,14 @@ export function PropertiesFilters() {
               onChange={(e) => {
                 setLocationSearch(e.target.value)
                 setShowLocationDropdown(true)
+                if (onFiltersChange) {
+                  onFiltersChange({
+                    propertyStatus,
+                    selectedTypes,
+                    locationSearch: e.target.value,
+                    priceRange
+                  })
+                }
               }}
               onFocus={() => setShowLocationDropdown(true)}
                              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none text-gray-900"
@@ -133,6 +214,46 @@ export function PropertiesFilters() {
         </div>
       </div>
 
+      {/* Property Status (Rent/Buy) */}
+      <div className="mb-6">
+        <h4 className="font-medium text-gray-900 mb-3">Property Status</h4>
+        <div className="flex space-x-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="propertyStatus"
+              value="all"
+              checked={propertyStatus === 'all'}
+              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            />
+            <span className="ml-2 text-sm text-gray-700">All Properties</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="propertyStatus"
+              value="rent"
+              checked={propertyStatus === 'rent'}
+              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            />
+            <span className="ml-2 text-sm text-gray-700">For Rent</span>
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="propertyStatus"
+              value="sale"
+              checked={propertyStatus === 'sale'}
+              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
+              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+            />
+            <span className="ml-2 text-sm text-gray-700">For Sale</span>
+          </label>
+        </div>
+      </div>
+
       {/* Price Range */}
       <div className="mb-6">
         <h4 className="font-medium text-gray-900 mb-3">Price Range</h4>
@@ -144,7 +265,7 @@ export function PropertiesFilters() {
                 type="number"
                 placeholder="Min"
                 value={priceRange[0]}
-                onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
+                onChange={(e) => handlePriceRangeChange([parseInt(e.target.value) || 0, priceRange[1]])}
                 className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
               />
             </div>
@@ -155,7 +276,7 @@ export function PropertiesFilters() {
                 type="number"
                 placeholder="Max"
                 value={priceRange[1]}
-                onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 10000])}
+                onChange={(e) => handlePriceRangeChange([priceRange[0], parseInt(e.target.value) || 1000000])}
                 className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
               />
             </div>
