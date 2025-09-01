@@ -170,22 +170,14 @@
     @apply rounded-full px-6 py-3 font-medium transition-all hover:shadow-md;
   }
 
-  /* Enhanced Radix UI component styling for blue theme */
+  /* Enhanced Radix UI component styling using theme tokens */
   [data-radix-select-trigger]:focus,
   [data-radix-select-trigger]:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2 border-blue-500;
+    @apply ring-2 ring-ring ring-offset-2 border-ring;
   }
 
   [data-radix-select-content] {
     @apply bg-white border border-gray-200 shadow-lg rounded-lg;
-  }
-
-  [data-radix-select-item]:hover {
-    @apply bg-blue-50 text-blue-900;
-  }
-
-  [data-radix-select-item][data-highlighted] {
-    @apply bg-blue-100 text-blue-900;
   }
 
   [data-radix-popover-content] {
@@ -197,21 +189,19 @@
   }
 
   [data-radix-tabs-trigger][data-state="active"] {
-    @apply text-blue-600 border-b-2 border-blue-600;
+    @apply border-b-2;
   }
 
   [data-radix-tabs-trigger]:hover {
-    @apply text-blue-700 bg-blue-50;
+    @apply bg-accent text-accent-foreground;
   }
 
-  [data-radix-collapsible-trigger]:focus {
-    @apply ring-2 ring-blue-500 ring-offset-2;
-  }
+  [data-radix-collapsible-trigger]:focus { @apply ring-2 ring-ring ring-offset-2; }
 
-  /* Button focus and hover states */
+  /* Button focus states - use theme ring color */
   button:focus-visible,
   .btn:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2;
+    @apply ring-2 ring-ring ring-offset-2;
   }
 
   /* Specific override for Send Message button to prevent deep blue hover */
@@ -245,20 +235,14 @@
   /* Input focus states */
   input:focus,
   textarea:focus,
-  select:focus {
-    @apply ring-2 ring-blue-500 border-blue-500;
-  }
+  select:focus { @apply ring-2 ring-ring border-ring; }
 
   /* Checkbox and radio focus states */
   input[type="checkbox"]:focus,
-  input[type="radio"]:focus {
-    @apply ring-2 ring-blue-500 ring-offset-2;
-  }
+  input[type="radio"]:focus { @apply ring-2 ring-ring ring-offset-2; }
 
   /* Slider focus states */
-  [data-radix-slider-thumb]:focus {
-    @apply ring-2 ring-blue-500 ring-offset-2;
-  }
+  [data-radix-slider-thumb]:focus { @apply ring-2 ring-ring ring-offset-2; }
 
   /* Tooltip styling */
   [data-radix-tooltip-content] {
@@ -270,168 +254,15 @@
     @apply bg-white border border-gray-200 shadow-lg rounded-lg py-1;
   }
 
-  [data-radix-dropdown-menu-item]:hover {
-    @apply bg-blue-50 text-blue-900;
-  }
+  [data-radix-dropdown-menu-item]:hover { @apply bg-accent text-accent-foreground; }
 
-  [data-radix-dropdown-menu-item][data-highlighted] {
-    @apply bg-blue-100 text-blue-900;
-  }
+  [data-radix-dropdown-menu-item][data-highlighted] { @apply bg-accent text-accent-foreground; }
 
   /* Command palette styling */
-  [data-radix-command-input]:focus {
-    @apply ring-2 ring-blue-500 border-blue-500;
-  }
+  [data-radix-command-input]:focus { @apply ring-2 ring-ring border-ring; }
 
-  [data-radix-command-item]:hover {
-    @apply bg-blue-50 text-blue-900;
-  }
+  [data-radix-command-item]:hover { @apply bg-accent text-accent-foreground; }
 
-  [data-radix-command-item][data-selected] {
-    @apply bg-blue-100 text-blue-900;
-  }
-
-  /* STRONG OVERRIDES for Select component to fix peach background issue */
-  [data-radix-select-item] {
-    background-color: transparent !important;
-  }
-
-  [data-radix-select-item]:hover {
-    background-color: rgb(239 246 255) !important; /* bg-blue-50 - very light blue */
-    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
-  }
-
-  [data-radix-select-item][data-highlighted] {
-    background-color: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
-    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
-  }
-
-  [data-radix-select-item][data-state="checked"] {
-    background-color: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
-    color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
-  }
-
-  /* Force override any CSS custom properties that might be causing peach colors */
-  :root {
-    --radix-select-item-bg: rgb(239 246 255) !important; /* bg-blue-50 - very light blue */
-    --radix-select-item-color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
-    --radix-select-item-hover-bg: rgb(219 234 254) !important; /* bg-blue-100 - light blue */
-    --radix-select-item-hover-color: rgb(59 130 246) !important; /* text-blue-500 - lighter blue text */
-  }
-
-  /* Additional overrides for any remaining orange/peach colors */
-  .bg-orange-500,
-  .bg-orange-600,
-  .bg-orange-700,
-  .bg-orange-800,
-  .bg-orange-900 {
-    @apply bg-blue-500;
-  }
-
-  .bg-orange-50,
-  .bg-orange-100,
-  .bg-orange-200,
-  .bg-orange-300,
-  .bg-orange-400 {
-    @apply bg-blue-50;
-  }
-
-  .text-orange-500,
-  .text-orange-600,
-  .text-orange-700,
-  .text-orange-800,
-  .text-orange-900 {
-    @apply text-blue-600;
-  }
-
-  .text-orange-50,
-  .text-orange-100,
-  .text-orange-200,
-  .text-orange-300,
-  .text-orange-400 {
-    @apply text-blue-400;
-  }
-
-  .border-orange-500,
-  .border-orange-600,
-  .border-orange-700,
-  .border-orange-800,
-  .border-orange-900 {
-    @apply border-blue-500;
-  }
-
-  .border-orange-50,
-  .border-orange-100,
-  .border-orange-200,
-  .border-orange-300,
-  .border-orange-400 {
-    @apply border-blue-200;
-  }
-
-  .ring-orange-500,
-  .ring-orange-600,
-  .ring-orange-700,
-  .ring-orange-800,
-  .ring-orange-900 {
-    @apply ring-blue-500;
-  }
-
-  .ring-orange-50,
-  .ring-orange-100,
-  .ring-orange-200,
-  .ring-orange-300,
-  .ring-orange-400 {
-    @apply ring-blue-200;
-  }
-
-  /* Peach color overrides */
-  .bg-amber-500,
-  .bg-amber-600,
-  .bg-amber-700,
-  .bg-amber-800,
-  .bg-amber-900 {
-    @apply bg-indigo-500;
-  }
-
-  .bg-amber-50,
-  .bg-amber-100,
-  .bg-amber-200,
-  .bg-amber-300,
-  .bg-amber-400 {
-    @apply bg-indigo-50;
-  }
-
-  .text-amber-500,
-  .text-amber-600,
-  .text-amber-700,
-  .text-amber-800,
-  .text-amber-900 {
-    @apply text-indigo-600;
-  }
-
-  .text-amber-50,
-  .text-amber-100,
-  .text-amber-200,
-  .text-amber-300,
-  .text-amber-400 {
-    @apply text-indigo-400;
-  }
-
-  /* Focus ring overrides for all interactive elements */
-  *:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2;
-  }
-
-  /* Hover state overrides */
-  button:hover:not(:disabled),
-  .btn:hover:not(:disabled) {
-    @apply bg-blue-600 text-white;
-  }
-
-  button:active:not(:disabled),
-  .btn:active:not(:disabled) {
-    @apply bg-blue-700;
-  }
-
+  [data-radix-command-item][data-selected] { @apply bg-accent text-accent-foreground; }
 
 }

@@ -1,13 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Search, MessageCircle, User, Menu, X, Home, Building2, Heart, ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const timeoutRef = useRef<NodeJS.Timeout>()
 
   const navigation = [
     { name: 'Home', href: '/', icon: Home },
@@ -20,6 +23,34 @@ export function Navigation() {
     { name: 'Profile', href: '/profile', icon: User },
     { name: 'My Listings', href: '/my-listings', icon: Building2 },
   ]
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setIsAccountDropdownOpen(true)
+  }
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsAccountDropdownOpen(false)
+    }, 150) // Small delay to prevent immediate closing
+  }
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node) &&
+          buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
+        setIsAccountDropdownOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
 
   return (
     <nav className="nav bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
@@ -53,10 +84,13 @@ export function Navigation() {
           <div className="hidden md:block">
             <div 
               className="relative"
-              onMouseEnter={() => setIsAccountDropdownOpen(true)}
-              onMouseLeave={() => setIsAccountDropdownOpen(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
-              <button className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 w-40 justify-center">
+              <button 
+                ref={buttonRef}
+                className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 w-40 justify-center"
+              >
                 <User className="h-4 w-4" />
                 <span>Account</span>
                 <ChevronDown className="h-4 w-4" />
@@ -64,7 +98,10 @@ export function Navigation() {
               
               {/* Dropdown Menu */}
               {isAccountDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <div 
+                  ref={dropdownRef}
+                  className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                >
                   {accountMenuItems.map((item) => (
                     <Link
                       key={item.name}
