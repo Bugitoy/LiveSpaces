@@ -1,17 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { User, Mail, Phone, MapPin, Edit, Camera, Save, X, Building2, Heart, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
+import { useSession, signIn, signOut } from 'next-auth/react'
 
 export default function ProfilePage() {
+  const { status, data: session } = useSession()
   const [isEditing, setIsEditing] = useState(false)
   const [profileData, setProfileData] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+267 71 234 567',
-    location: 'Gaborone, Botswana',
-    bio: 'Real estate enthusiast and property investor with over 5 years of experience in the Botswana market.',
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    bio: '',
     avatar: '/placeholder.svg'
   })
 
@@ -34,6 +36,40 @@ export default function ProfilePage() {
   const stats = [
     { label: 'Properties Listed', value: '12', icon: Building2, color: 'text-blue-600' },
   ]
+
+  useEffect(() => {
+    if (status !== 'authenticated') return
+    const load = async () => {
+      const res = await fetch('/api/me', { cache: 'no-store' })
+      if (!res.ok) return
+      const user = await res.json()
+      setProfileData((prev) => ({
+        ...prev,
+        name: user.name ?? '',
+        email: user.email ?? '',
+        avatar: user.avatar ?? (session?.user as any)?.image ?? '/placeholder.svg',
+      }))
+      setTempData((prev) => ({
+        ...prev,
+        name: user.name ?? '',
+        email: user.email ?? '',
+        avatar: user.avatar ?? (session?.user as any)?.image ?? '/placeholder.svg',
+      }))
+    }
+    load()
+  }, [status, session])
+
+  if (status === 'unauthenticated') {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center space-y-4">
+          <h1 className="text-2xl font-bold text-gray-900">Sign in to view your profile</h1>
+          <p className="text-gray-600">Access and manage your account details.</p>
+          <button onClick={() => signIn('google')} className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">Sign In</button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 pt-16">
@@ -203,6 +239,16 @@ export default function ProfilePage() {
                       <p className="text-gray-900">{profileData.bio}</p>
                     </div>
                   )}
+                </div>
+
+                {/* Sign Out */}
+                <div>
+                  <button
+                    onClick={() => signOut()}
+                    className="btn bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-200 transition-colors"
+                  >
+                    Sign Out
+                  </button>
                 </div>
               </div>
             </div>
