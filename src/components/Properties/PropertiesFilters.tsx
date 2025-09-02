@@ -2,6 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { Filter, MapPin } from 'lucide-react'
+import { Input } from '@/components/ui/input'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Slider } from '@/components/ui/slider'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
 interface PropertiesFiltersProps {
   onFiltersChange?: (filters: {
@@ -165,181 +172,179 @@ export function PropertiesFilters({ onFiltersChange }: PropertiesFiltersProps) {
           Clear all
         </button>
       </div>
-
-      {/* Location Search */}
-      <div className="mb-6" ref={locationRef}>
-        <h4 className="font-medium text-gray-900 mb-3">Location</h4>
-        <div className="relative">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search for locations"
-              value={locationSearch}
-              onChange={(e) => {
-                setLocationSearch(e.target.value)
-                setShowLocationDropdown(true)
-                if (onFiltersChange) {
-                  onFiltersChange({
-                    propertyStatus,
-                    selectedTypes,
-                    locationSearch: e.target.value,
-                    priceRange
-                  })
-                }
-              }}
-              onFocus={() => setShowLocationDropdown(true)}
-                             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none text-gray-900"
-            />
-          </div>
-          
-          {/* Location Dropdown */}
-          {showLocationDropdown && locationSearch && (
-            <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-y-auto">
-              {filteredLocations.length > 0 ? (
-                filteredLocations.map((location) => (
-                  <button
-                    key={location}
-                    onClick={() => selectLocation(location)}
-                    className="w-full text-left px-4 py-2 hover:bg-blue-50 focus:bg-blue-50 focus:outline-none text-gray-900 font-medium"
-                  >
-                    {location}
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-2 text-gray-500 font-medium">No locations found</div>
-              )}
+      <Accordion type="multiple" defaultValue={["location","status","price","type","beds","baths","size"]} className="w-full">
+        <AccordionItem value="location">
+          <AccordionTrigger>Location</AccordionTrigger>
+          <AccordionContent>
+            <div className="mb-6" ref={locationRef}>
+              <div className="relative">
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Search for locations"
+                    value={locationSearch}
+                    onChange={(e) => {
+                      setLocationSearch(e.target.value)
+                      setShowLocationDropdown(true)
+                      if (onFiltersChange) {
+                        onFiltersChange({
+                          propertyStatus,
+                          selectedTypes,
+                          locationSearch: e.target.value,
+                          priceRange
+                        })
+                      }
+                    }}
+                    onFocus={() => setShowLocationDropdown(true)}
+                                   className="w-full pl-10 pr-4 text-gray-900"
+                  />
+                </div>
+                {showLocationDropdown && (
+                  <div className="absolute z-50 w-full mt-1">
+                    <Command className="rounded-md border bg-white">
+                      <CommandInput value={locationSearch} onValueChange={(v) => setLocationSearch(v)} placeholder="Type a location..." />
+                      <CommandEmpty>No locations found.</CommandEmpty>
+                      <CommandGroup>
+                        {filteredLocations.map((location) => (
+                          <CommandItem key={location} onSelect={() => selectLocation(location)}>
+                            {location}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-        </div>
-      </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Property Status (Rent/Buy) */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Property Status</h4>
-        <div className="flex space-x-4">
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="propertyStatus"
-              value="all"
-              checked={propertyStatus === 'all'}
-              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-            />
-            <span className="ml-2 text-sm text-gray-700">All Properties</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="propertyStatus"
-              value="rent"
-              checked={propertyStatus === 'rent'}
-              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-            />
-            <span className="ml-2 text-sm text-gray-700">For Rent</span>
-          </label>
-          <label className="flex items-center">
-            <input
-              type="radio"
-              name="propertyStatus"
-              value="sale"
-              checked={propertyStatus === 'sale'}
-              onChange={(e) => handlePropertyStatusChange(e.target.value as 'all' | 'rent' | 'sale')}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-            />
-            <span className="ml-2 text-sm text-gray-700">For Sale</span>
-          </label>
-        </div>
-      </div>
+        <AccordionItem value="status">
+          <AccordionTrigger>Property Status</AccordionTrigger>
+          <AccordionContent>
+            <RadioGroup
+              value={propertyStatus}
+              onValueChange={(v) => handlePropertyStatusChange(v as 'all' | 'rent' | 'sale')}
+              className="flex space-x-4"
+            >
+              <label className="flex items-center space-x-2">
+                <RadioGroupItem value="all" />
+                <span className="text-sm text-gray-700">All Properties</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <RadioGroupItem value="rent" />
+                <span className="text-sm text-gray-700">For Rent</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <RadioGroupItem value="sale" />
+                <span className="text-sm text-gray-700">For Sale</span>
+              </label>
+            </RadioGroup>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Price Range */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Price Range</h4>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2 text-gray-900">
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
-              <input
-                type="number"
-                placeholder="Min"
-                value={priceRange[0]}
-                onChange={(e) => handlePriceRangeChange([parseInt(e.target.value) || 0, priceRange[1]])}
-                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
-              />
+        <AccordionItem value="price">
+          <AccordionTrigger>Price Range</AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-4">
+              <Slider value={priceRange} min={0} max={1000000} step={1000} onValueChange={(v) => handlePriceRangeChange(v as number[])} />
+              <div className="flex items-center space-x-2 text-gray-900">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={priceRange[0]}
+                    onChange={(e) => handlePriceRangeChange([parseInt(e.target.value) || 0, priceRange[1]])}
+                    className="w-full pl-6 pr-1 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                <span className="text-gray-500">to</span>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={priceRange[1]}
+                    onChange={(e) => handlePriceRangeChange([priceRange[0], parseInt(e.target.value) || 1000000])}
+                    className="w-full pl-6 pr-1 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
             </div>
-            <span className="text-gray-500">to</span>
-            <div className="relative flex-1">
-              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">P</span>
-              <input
-                type="number"
-                placeholder="Max"
-                value={priceRange[1]}
-                onChange={(e) => handlePriceRangeChange([priceRange[0], parseInt(e.target.value) || 1000000])}
-                className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:border-blue-500 focus:outline-none"
-              />
+          </AccordionContent>
+        </AccordionItem>
+
+        <AccordionItem value="type">
+          <AccordionTrigger>Property Type</AccordionTrigger>
+          <AccordionContent>
+            <div className="space-y-2">
+              {propertyTypes.map((type) => (
+                <label key={type.value} className="flex items-center">
+                  <Checkbox
+                    checked={selectedTypes.includes(type.value)}
+                    onCheckedChange={() => handleTypeChange(type.value)}
+                    className="h-4 w-4"
+                  />
+                  <span className="ml-2 text-sm text-gray-700">{type.label}</span>
+                </label>
+              ))}
             </div>
-          </div>
-        </div>
-      </div>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Property Type */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Property Type</h4>
-        <div className="space-y-2">
-          {propertyTypes.map((type) => (
-            <label key={type.value} className="flex items-center">
-              <input
-                type="checkbox"
-                checked={selectedTypes.includes(type.value)}
-                onChange={() => handleTypeChange(type.value)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="ml-2 text-sm text-gray-700">{type.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
+        <AccordionItem value="beds">
+          <AccordionTrigger>Bedrooms</AccordionTrigger>
+          <AccordionContent>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Any" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5+</SelectItem>
+              </SelectContent>
+            </Select>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Bedrooms */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Bedrooms</h4>
-        <select className="w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:border-blue-500 focus:outline-none">
-          <option value="">Any</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5+</option>
-        </select>
-      </div>
+        <AccordionItem value="baths">
+          <AccordionTrigger>Bathrooms</AccordionTrigger>
+          <AccordionContent>
+            <Select>
+              <SelectTrigger>
+                <SelectValue placeholder="Any" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+                <SelectItem value="5">5+</SelectItem>
+              </SelectContent>
+            </Select>
+          </AccordionContent>
+        </AccordionItem>
 
-      {/* Bathrooms */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Bathrooms</h4>
-        <select className="w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:border-blue-500 focus:outline-none">
-          <option value="">Any</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5+</option>
-        </select>
-      </div>
+        <AccordionItem value="size">
+          <AccordionTrigger>Min Square Footage</AccordionTrigger>
+          <AccordionContent>
+            <input
+              type="number"
+              placeholder="Enter min sq ft"
+              className="w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:border-blue-500 focus:outline-none"
+            />
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
-      {/* Square Footage */}
-      <div className="mb-6">
-        <h4 className="font-medium text-gray-900 mb-3">Min Square Footage</h4>
-        <input
-          type="number"
-          placeholder="Enter min sq ft"
-          className="w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md focus:border-blue-500 focus:outline-none"
-        />
-      </div>
-
-      {/* Apply Filters Button */}
-      <button className="w-full bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-blue-300 transition-colors font-medium">
+      <button className="mt-6 w-full bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-blue-300 transition-colors font-medium">
         Apply Filters
       </button>
     </div>

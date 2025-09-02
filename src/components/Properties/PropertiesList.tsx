@@ -3,6 +3,11 @@
 import { useState, useEffect } from 'react'
 import { Heart, MapPin, Bed, Bath, Square, Star, Grid, List, ChevronLeft, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { Card } from '@/components/ui/card'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 interface PropertiesListProps {
   filters?: {
@@ -148,6 +153,7 @@ export function PropertiesList({ filters }: PropertiesListProps) {
   const [currentPage, setCurrentPage] = useState(1)
   const propertiesPerPage = 6
   const [imageIndices, setImageIndices] = useState<{ [key: string]: number }>({})
+  const [sortBy, setSortBy] = useState<'relevance' | 'price_asc' | 'price_desc' | 'reviews'>('relevance')
 
   // Apply filters to properties
   const filteredProperties = sampleProperties.filter(property => {
@@ -200,12 +206,24 @@ export function PropertiesList({ filters }: PropertiesListProps) {
   const totalPages = Math.ceil(filteredProperties.length / propertiesPerPage)
   const startIndex = (currentPage - 1) * propertiesPerPage
   const endIndex = startIndex + propertiesPerPage
-  const currentProperties = filteredProperties.slice(startIndex, endIndex)
+  const sortedProperties = [...filteredProperties].sort((a, b) => {
+    switch (sortBy) {
+      case 'price_asc':
+        return a.price - b.price
+      case 'price_desc':
+        return b.price - a.price
+      case 'reviews':
+        return b.rating - a.rating || b.reviews - a.reviews
+      default:
+        return 0
+    }
+  })
+  const currentProperties = sortedProperties.slice(startIndex, endIndex)
 
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [filters?.propertyStatus, filters?.selectedTypes, filters?.locationSearch, filters?.priceRange])
+  }, [filters?.propertyStatus, filters?.selectedTypes, filters?.locationSearch, filters?.priceRange, sortBy])
 
   return (
     <div>
@@ -223,26 +241,25 @@ export function PropertiesList({ filters }: PropertiesListProps) {
           </div>
         
         <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md ${
-              viewMode === 'grid' 
-                ? 'bg-blue-100 text-blue-600' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <Grid className="h-5 w-5" />
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md ${
-              viewMode === 'list' 
-                ? 'bg-blue-100 text-blue-600' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
-            <List className="h-5 w-5" />
-          </button>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as 'relevance' | 'price_asc' | 'price_desc' | 'reviews')}>
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Sort by" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="relevance">Recommended</SelectItem>
+              <SelectItem value="price_asc">Lowest price</SelectItem>
+              <SelectItem value="price_desc">Highest price</SelectItem>
+              <SelectItem value="reviews">Best reviews</SelectItem>
+            </SelectContent>
+          </Select>
+          <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as 'grid' | 'list')}>
+            <ToggleGroupItem value="grid" aria-label="Grid view">
+              <Grid className="h-5 w-5" />
+            </ToggleGroupItem>
+            <ToggleGroupItem value="list" aria-label="List view">
+              <List className="h-5 w-5" />
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 
@@ -265,18 +282,20 @@ export function PropertiesList({ filters }: PropertiesListProps) {
           : 'space-y-4'
         }>
           {currentProperties.map((property) => (
-          <div key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
+          <Card key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
             viewMode === 'list' ? 'flex' : ''
           }`}>
             {/* Property Image Carousel */}
             <div className={`relative overflow-hidden ${
-              viewMode === 'list' ? 'w-1/3 h-48' : 'h-48'
+              viewMode === 'list' ? 'w-1/3' : ''
             }`}>
-              <img
-                src={property.images[imageIndices[property.id] || 0]}
-                alt={property.title}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              />
+              <AspectRatio ratio={16/9}>
+                <img
+                  src={property.images[imageIndices[property.id] || 0]}
+                  alt={property.title}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                />
+              </AspectRatio>
               
               {/* Carousel Navigation Arrows */}
               {property.images.length > 1 && (
@@ -367,44 +386,30 @@ export function PropertiesList({ filters }: PropertiesListProps) {
                 View Details
               </Link>
             </div>
-          </div>
-        ))}
+          </Card>
+          ))}
         </div>
       )}
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center space-x-2 mt-8">
-          <button
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Previous
-          </button>
-          
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-2 border rounded-md ${
-                currentPage === page
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-          
-          <button
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-2 border border-gray-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-          >
-            Next
-          </button>
-        </div>
+        <Pagination className="mt-8">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(Math.max(1, currentPage - 1)); }} />
+            </PaginationItem>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink href="#" isActive={currentPage === page} onClick={(e) => { e.preventDefault(); setCurrentPage(page); }}>
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setCurrentPage(Math.min(totalPages, currentPage + 1)); }} />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </div>
   )
