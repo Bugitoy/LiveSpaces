@@ -5,8 +5,8 @@
 
 @layer base {
   :root {
-    --background: #ffffff;
-    --foreground: #171717;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 9%;
     --font-inter: var(--font-inter);
     --font-poppins: var(--font-poppins);
     
@@ -40,8 +40,8 @@
   }
 
   .dark {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 95%;
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
@@ -76,8 +76,8 @@
   }
   
   body {
-    background: var(--background);
-    color: var(--foreground);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-weight: 400;
     line-height: 1.6;
@@ -210,32 +210,16 @@
     color: rgb(29 78 216) !important; /* text-blue-700 */
   }
 
-  /* Dialog backdrop styling */
+  /* Dialog overlay: semi-transparent backdrop only (content stays solid) */
   [data-radix-dialog-overlay] {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    backdrop-filter: blur(4px);
+    background-color: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
   }
 
-  /* Additional Dialog backdrop overrides */
-  .fixed.inset-0 {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-  }
-
-  /* Force dark backdrop for any dialog overlay */
-  [role="dialog"] {
-    background-color: rgba(0, 0, 0, 0.5) !important;
-  }
-
-  /* Target the specific overlay element */
-  [data-state="open"][data-radix-dialog-overlay] {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(4px);
-  }
-
-  /* Input focus states */
+  /* Let component styles control input focus rings to avoid double borders */
   input:focus,
   textarea:focus,
-  select:focus { @apply ring-2 ring-ring border-ring; }
+  select:focus { outline: none; }
 
   /* Checkbox and radio focus states */
   input[type="checkbox"]:focus,

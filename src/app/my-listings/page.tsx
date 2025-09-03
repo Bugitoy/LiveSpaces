@@ -1,8 +1,19 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus, Building2, Home, MapPin, DollarSign, Bed, Bath, Square, Eye, Edit, Trash2, Filter, Search, X, Upload, Image as ImageIcon, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
+import { Plus, Building2, Home, MapPin, DollarSign, Bed, Bath, Square, Eye, Edit, Trash2, Search, X, Image as ImageIcon, ChevronLeft, ChevronRight, CheckCircle2 } from 'lucide-react'
 import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Checkbox } from '@/components/ui/checkbox'
 
 interface Property {
   id: string
@@ -201,18 +212,16 @@ export default function MyListingsPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Listings</h1>
             <p className="text-gray-600">Manage your property listings</p>
           </div>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="btn bg-green-600 text-white px-6 py-3 rounded-lg hover:!bg-green-700 transition-colors flex items-center space-x-2 mt-4 md:mt-0"
-          >
+          <Button onClick={() => setShowCreateModal(true)} className="bg-green-600 text-white hover:!bg-green-700 flex items-center space-x-2 mt-4 md:mt-0">
             <Plus className="w-5 h-5" />
             <span>Create New Listing</span>
-          </button>
+          </Button>
         </div>
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <Card className="rounded-2xl">
+            <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-blue-100 rounded-lg">
                 <Building2 className="w-6 h-6 text-blue-600" />
@@ -222,9 +231,11 @@ export default function MyListingsPage() {
                 <p className="text-2xl font-bold text-gray-900">{allProperties.length}</p>
               </div>
             </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <Card className="rounded-2xl">
+            <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-green-100 rounded-lg">
                 <Home className="w-6 h-6 text-green-600" />
@@ -236,9 +247,11 @@ export default function MyListingsPage() {
                 </p>
               </div>
             </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <Card className="rounded-2xl">
+            <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-yellow-100 rounded-lg">
                 <Eye className="w-6 h-6 text-yellow-600" />
@@ -250,9 +263,11 @@ export default function MyListingsPage() {
                 </p>
               </div>
             </div>
-          </div>
+            </CardContent>
+          </Card>
           
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+          <Card className="rounded-2xl">
+            <CardContent className="p-6">
             <div className="flex items-center space-x-3">
               <div className="p-3 bg-purple-100 rounded-lg">
                 <DollarSign className="w-6 h-6 text-purple-600" />
@@ -264,51 +279,42 @@ export default function MyListingsPage() {
                 </p>
               </div>
             </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-8">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
-            {/* Tab Filters */}
-            <div className="flex space-x-1 bg-gray-100 p-1 rounded-lg">
-              {[
-                { key: 'all', label: 'All Listings' },
-                { key: 'sale', label: 'For Sale' },
-                { key: 'rent', label: 'For Rent' }
-              ].map((tab) => (
-                <button
-                  key={tab.key}
-                  onClick={() => setActiveTab(tab.key as any)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === tab.key
-                      ? 'bg-white text-blue-600 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+        <Card className="rounded-2xl mb-8">
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+              {/* Tab Filters */}
+              <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
+                <TabsList className="bg-gray-100 p-1 rounded-lg">
+                  <TabsTrigger value="all" className={activeTab === 'all' ? 'bg-white text-blue-600 shadow-sm' : ''}>All Listings</TabsTrigger>
+                  <TabsTrigger value="sale" className={activeTab === 'sale' ? 'bg-white text-blue-600 shadow-sm' : ''}>For Sale</TabsTrigger>
+                  <TabsTrigger value="rent" className={activeTab === 'rent' ? 'bg-white text-blue-600 shadow-sm' : ''}>For Rent</TabsTrigger>
+                </TabsList>
+              </Tabs>
 
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by city, address or title"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent w-full md:w-96 lg:w-[550px]"
-              />
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="Search by city, address or title"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 w-full md:w-96 lg:w-[550px]"
+                />
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Properties Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProperties.map((property) => (
-            <div key={property.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+            <Card key={property.id} className="rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
               {/* Property Image */}
               <div className="relative h-48 bg-gray-200">
                 {property.image ? (
@@ -323,19 +329,19 @@ export default function MyListingsPage() {
                   </div>
                 )}
                 <div className="absolute top-3 left-3">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(property.status)}`}>
+                  <Badge className={`${getStatusColor(property.status)} border-none px-2 py-1 text-xs`}>
                     {getStatusText(property.status)}
-                  </span>
+                  </Badge>
                 </div>
                 <div className="absolute top-3 right-3">
-                  <span className="px-2 py-1 rounded-full text-xs font-medium bg-black bg-opacity-50 text-white">
+                  <Badge className="px-2 py-1 text-xs font-medium bg-black/50 text-white border-none">
                     {property.type === 'sale' ? 'Sale' : 'Rent'}
-                  </span>
+                  </Badge>
                 </div>
               </div>
 
               {/* Property Details */}
-              <div className="p-6">
+              <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                   {property.title}
                 </h3>
@@ -373,18 +379,14 @@ export default function MyListingsPage() {
 
                 {/* Action Buttons */}
                 <div className="flex space-x-2">
-                  <button className="flex-1 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                    View Details
-                  </button>
-                  <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Edit className="w-4 h-4 text-gray-600" />
-                  </button>
-                  <button className="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Trash2 className="w-4 h-4 text-red-600" />
-                  </button>
+                  <Link href={`/properties/${property.id}`} className="flex-1">
+                    <Button className="w-full bg-blue-600 text-white hover:bg-blue-700 text-sm font-medium">View Details</Button>
+                  </Link>
+                  <Button variant="outline" className="px-3"><Edit className="w-4 h-4 text-gray-600" /></Button>
+                  <Button variant="outline" className="px-3"><Trash2 className="w-4 h-4 text-red-600" /></Button>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
@@ -409,19 +411,13 @@ export default function MyListingsPage() {
       </div>
 
       {/* Create Listing Modal */}
-      {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-0 max-w-3xl w-full mx-4 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Create New Listing</h2>
-                <p className="text-sm text-gray-500">Step {formStep + 1} of {steps.length}: {steps[formStep]}</p>
-              </div>
-              <button onClick={() => { setShowCreateModal(false); setFormStep(0); }} className="text-gray-500 rounded-sm p-1 hover:!bg-red-400 focus:!bg-red-400 active:!bg-red-500">
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="px-6 py-6 max-h-[75vh] overflow-y-auto">
+      <Dialog open={showCreateModal} onOpenChange={(o) => { setShowCreateModal(!!o); if (!o) setFormStep(0) }}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Create New Listing</DialogTitle>
+            <DialogDescription>Step {formStep + 1} of {steps.length}: {steps[formStep]}</DialogDescription>
+          </DialogHeader>
+          <div className="px-6 py-6 max-h-[75vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
                 {steps.map((label, idx) => (
                   <div key={label} className="flex-1 flex items-center">
@@ -711,54 +707,52 @@ export default function MyListingsPage() {
                   </div>
                 </div>
               )}
-            </div>
-
-            <div className="px-6 py-4 border-t flex items-center justify-between">
-              <button disabled={formStep === 0} onClick={() => setFormStep(Math.max(0, formStep - 1))} className={`flex items-center space-x-2 px-4 py-2 rounded-lg border ${formStep === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-50'}`}>
-                <ChevronLeft className="w-4 h-4" />
-                <span>Back</span>
-              </button>
-              {formStep < steps.length - 1 ? (
-                <button onClick={() => setFormStep(Math.min(steps.length - 1, formStep + 1))} className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
-                  <span>Next</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              ) : (
-              <button
-                  onClick={() => {
-                    const id = String(Date.now())
-                    const newProperty: Property = {
-                      id,
-                      title: formData.title || 'Untitled Listing',
-                      type: formData.listingKind,
-                      price: formData.listingKind === 'rent' ? Number(formData.monthlyRent || 0) : Number(formData.salePrice || 0),
-                      location: formData.streetAddress ? `${formData.streetAddress}${formData.plotNumber ? ` (Plot ${formData.plotNumber})` : ''}` : 'Location hidden',
-                      bedrooms: Number(formData.bedrooms || 0),
-                      bathrooms: Number(formData.bathrooms || 0),
-                      area: Number(formData.squareFootage || 0),
-                      image: '/placeholder.svg',
-                      status: 'active',
-                      views: 0,
-                      createdAt: new Date().toISOString().split('T')[0],
-                    }
-                    setUserListings((prev) => [newProperty, ...prev])
-                    setFormStep(0)
-                    setFormData({
-                      title: '', streetAddress: '', plotNumber: '', propertyType: '', listingKind: 'rent', yearBuilt: '', squareFootage: '', bedrooms: '', bathrooms: '', description: '', upgrades: '', showAddress: true, monthlyRent: '', salePrice: '', chargeSecurityDeposit: false, securityDepositAmount: '', availableDate: '', leaseDuration: 'na', leaseDescription: '', amenities: [], photos: [], contactRole: 'owner', contactName: '', contactEmail: '', contactPhone: '', allowPhone: true,
-                    })
-                    setShowCreateModal(false)
-                    alert('Congratulations! You published your listing and it will be posted shortly. Renters will start contacting you soon. Once you find a renter, deactivate the listing. The listing will automatically expire after one month, but you can extend if you need more time.')
-                  }}
-                  className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700"
-                >
-                  <CheckCircle2 className="w-4 h-4" />
-                  <span>Publish Listing</span>
-              </button>
-              )}
-            </div>
           </div>
-        </div>
-      )}
+          <DialogFooter className="flex items-center justify-between">
+            <Button disabled={formStep === 0} onClick={() => setFormStep(Math.max(0, formStep - 1))} className={`flex items-center space-x-2 bg-gray-100 text-gray-900 hover:bg-gray-200 ${formStep === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}>
+              <ChevronLeft className="w-4 h-4" />
+              <span>Back</span>
+            </Button>
+            {formStep < steps.length - 1 ? (
+              <Button onClick={() => setFormStep(Math.min(steps.length - 1, formStep + 1))} className="flex items-center space-x-2 bg-blue-200 text-gray-900 transition-colors shadow-sm hover:bg-blue-300 hover:shadow-md">
+                <span>Next</span>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  const id = String(Date.now())
+                  const newProperty: Property = {
+                    id,
+                    title: formData.title || 'Untitled Listing',
+                    type: formData.listingKind,
+                    price: formData.listingKind === 'rent' ? Number(formData.monthlyRent || 0) : Number(formData.salePrice || 0),
+                    location: formData.streetAddress ? `${formData.streetAddress}${formData.plotNumber ? ` (Plot ${formData.plotNumber})` : ''}` : 'Location hidden',
+                    bedrooms: Number(formData.bedrooms || 0),
+                    bathrooms: Number(formData.bathrooms || 0),
+                    area: Number(formData.squareFootage || 0),
+                    image: '/placeholder.svg',
+                    status: 'active',
+                    views: 0,
+                    createdAt: new Date().toISOString().split('T')[0],
+                  }
+                  setUserListings((prev) => [newProperty, ...prev])
+                  setFormStep(0)
+                  setFormData({
+                    title: '', streetAddress: '', plotNumber: '', propertyType: '', listingKind: 'rent', yearBuilt: '', squareFootage: '', bedrooms: '', bathrooms: '', description: '', upgrades: '', showAddress: true, monthlyRent: '', salePrice: '', chargeSecurityDeposit: false, securityDepositAmount: '', availableDate: '', leaseDuration: 'na', leaseDescription: '', amenities: [], photos: [], contactRole: 'owner', contactName: '', contactEmail: '', contactPhone: '', allowPhone: true,
+                  })
+                  setShowCreateModal(false)
+                  alert('Congratulations! You published your listing and it will be posted shortly. Renters will start contacting you soon. Once you find a renter, deactivate the listing. The listing will automatically expire after one month, but you can extend if you need more time.')
+                }}
+                className="flex items-center space-x-2 bg-green-600 text-white hover:bg-green-700"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                <span>Publish Listing</span>
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
