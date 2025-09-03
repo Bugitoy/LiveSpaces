@@ -1,9 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { User, Mail, Phone, MapPin, Edit, Camera, Save, X, Building2, Heart, MessageCircle } from 'lucide-react'
+import { User as UserIcon, Mail, Phone, MapPin, Edit, Camera, Save, X, Building2, Heart, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useSession, signIn, signOut } from 'next-auth/react'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
 export default function ProfilePage() {
   const { status, data: session } = useSession()
@@ -43,17 +48,34 @@ export default function ProfilePage() {
       const res = await fetch('/api/me', { cache: 'no-store' })
       if (!res.ok) return
       const user = await res.json()
+      const normalize = (val: unknown) => {
+        if (typeof val !== 'string') return ''
+        const v = val.trim()
+        if (!v || v.toLowerCase() === 'null' || v.toLowerCase() === 'undefined') return ''
+        // If it's a Google avatar URL without explicit size, append a sane default
+        if (v.startsWith('http://') || v.startsWith('https://') || v.startsWith('/')) {
+          if (v.includes('googleusercontent.com') && !/=s\d+/.test(v) && !/[?&]sz=\d+/.test(v)) {
+            return v + '=s160-c'
+          }
+          return v
+        }
+        return ''
+      }
+      const avatarFromDb = normalize(user.avatar)
+      const avatarFromSession = normalize((session?.user as any)?.image)
+      const resolvedAvatar = avatarFromDb || avatarFromSession || '/placeholder.svg'
+
       setProfileData((prev) => ({
         ...prev,
         name: user.name ?? '',
         email: user.email ?? '',
-        avatar: user.avatar ?? (session?.user as any)?.image ?? '/placeholder.svg',
+        avatar: resolvedAvatar,
       }))
       setTempData((prev) => ({
         ...prev,
         name: user.name ?? '',
         email: user.email ?? '',
-        avatar: user.avatar ?? (session?.user as any)?.image ?? '/placeholder.svg',
+        avatar: resolvedAvatar,
       }))
     }
     load()
@@ -62,11 +84,15 @@ export default function ProfilePage() {
   if (status === 'unauthenticated') {
     return (
       <div className="min-h-screen bg-gray-50 pt-16 flex items-center justify-center">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center space-y-4">
-          <h1 className="text-2xl font-bold text-gray-900">Sign in to view your profile</h1>
-          <p className="text-gray-600">Access and manage your account details.</p>
-          <button onClick={() => signIn('google')} className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">Sign In</button>
-        </div>
+        <Card className="rounded-2xl">
+          <CardContent className="p-8 text-center space-y-4">
+            <h1 className="text-2xl font-bold text-gray-900">Sign in to view your profile</h1>
+            <p className="text-gray-600">Access and manage your account details.</p>
+            <Button onClick={() => signIn('google')} className="bg-blue-600 text-white hover:bg-blue-700">
+              Sign In
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -83,50 +109,51 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <Card className="rounded-2xl">
+              <CardContent className="p-6">
               {/* Profile Picture Section */}
               <div className="text-center mb-6">
                 <div className="relative inline-block">
-                  <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mx-auto mb-4">
-                    {profileData.avatar ? (
-                      <img 
-                        src={profileData.avatar} 
-                        alt="Profile" 
-                        className="w-32 h-32 rounded-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-16 h-16 text-gray-400" />
-                    )}
-                  </div>
-                  <button className="absolute bottom-4 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
+                  <Avatar className="w-32 h-32 mx-auto mb-4">
+                    <AvatarImage src={profileData.avatar} alt="Profile" referrerPolicy="no-referrer" onError={(e) => {
+                      const img = e.currentTarget as HTMLImageElement
+                      if (img.src.endsWith('/placeholder.svg')) return
+                      img.src = '/placeholder.svg'
+                    }} />
+                    <AvatarFallback>
+                      <UserIcon className="w-16 h-16 text-gray-400" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <Button size="icon" className="absolute bottom-4 right-0 bg-blue-600 text-white rounded-full hover:bg-blue-700">
                     <Camera className="w-4 h-4" />
-                  </button>
+                  </Button>
                 </div>
                 
                 {!isEditing ? (
-                  <button
+                  <Button
                     onClick={() => setIsEditing(true)}
-                    className="btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2 mx-auto"
+                    className="bg-blue-600 text-white hover:bg-blue-700 flex items-center space-x-2 mx-auto"
                   >
                     <Edit className="w-4 h-4" />
                     <span>Edit Profile</span>
-                  </button>
+                  </Button>
                 ) : (
                   <div className="flex space-x-2 justify-center">
-                    <button
+                    <Button
                       onClick={handleSave}
-                      className="btn bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2"
+                      className="bg-green-600 text-white hover:bg-green-700 flex items-center space-x-2"
                     >
                       <Save className="w-4 h-4" />
                       <span>Save</span>
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={handleCancel}
-                      className="btn bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
+                      variant="outline"
+                      className="text-gray-700 border-gray-300 hover:bg-gray-50 flex items-center space-x-2"
                     >
                       <X className="w-4 h-4" />
                       <span>Cancel</span>
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -143,12 +170,14 @@ export default function ProfilePage() {
                   </div>
                 ))}
               </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Right Column - Profile Details */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <Card className="rounded-2xl">
+              <CardContent className="p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-6">Personal Information</h2>
               
               <div className="space-y-6">
@@ -156,15 +185,14 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={tempData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   ) : (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <User className="w-5 h-5 text-gray-400" />
+                      <UserIcon className="w-5 h-5 text-gray-400" />
                       <span className="text-gray-900">{profileData.name}</span>
                     </div>
                   )}
@@ -174,11 +202,10 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="email"
                       value={tempData.email}
                       onChange={(e) => handleInputChange('email', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   ) : (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -192,11 +219,10 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="tel"
                       value={tempData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   ) : (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -210,11 +236,10 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
                   {isEditing ? (
-                    <input
+                    <Input
                       type="text"
                       value={tempData.location}
                       onChange={(e) => handleInputChange('location', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   ) : (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -228,11 +253,10 @@ export default function ProfilePage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                   {isEditing ? (
-                    <textarea
+                    <Textarea
                       value={tempData.bio}
                       onChange={(e) => handleInputChange('bio', e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   ) : (
                     <div className="p-3 bg-gray-50 rounded-lg">
@@ -243,18 +267,20 @@ export default function ProfilePage() {
 
                 {/* Sign Out */}
                 <div>
-                  <button
+                  <Button
                     onClick={() => signOut()}
-                    className="btn bg-red-300 text-white px-4 py-2 rounded-lg hover:bg-red-200 transition-colors"
+                    variant="destructive"
                   >
                     Sign Out
-                  </button>
+                  </Button>
                 </div>
               </div>
-            </div>
+              </CardContent>
+            </Card>
 
             {/* Quick Actions */}
-            <div className="mt-6 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <Card className="mt-6 rounded-2xl">
+              <CardContent className="p-6">
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Link 
@@ -298,7 +324,7 @@ export default function ProfilePage() {
                 
                 <div className="p-4 border border-gray-200 rounded-lg hover:border-purple-300 hover:bg-purple-50 transition-colors cursor-pointer">
                   <div className="flex items-center space-x-3">
-                    <User className="w-6 h-6 text-purple-600" />
+                    <UserIcon className="w-6 h-6 text-purple-600" />
                     <div>
                       <h3 className="font-medium text-gray-900">Account Settings</h3>
                       <p className="text-sm text-gray-600">Security & preferences</p>
@@ -306,7 +332,8 @@ export default function ProfilePage() {
                   </div>
                 </div>
               </div>
-            </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

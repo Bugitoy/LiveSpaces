@@ -3,6 +3,11 @@
 import { useState } from 'react'
 import { Heart, MapPin, Bed, Bath, Square, Star, Trash2, MessageCircle, Eye } from 'lucide-react'
 import Link from 'next/link'
+import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'
 
 // Sample data - in a real app this would come from the database
 const sampleFavorites = [
@@ -95,37 +100,23 @@ export function FavoritesList() {
           </p>
         </div>
         
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={() => setViewMode('grid')}
-            className={`p-2 rounded-md ${
-              viewMode === 'grid' 
-                ? 'bg-blue-100 text-blue-600' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
+        <ToggleGroup type="single" value={viewMode} onValueChange={(v) => v && setViewMode(v as 'grid' | 'list')}>
+          <ToggleGroupItem value="grid" aria-label="Grid view">
             <div className="grid grid-cols-2 gap-1 w-4 h-4">
               <div className="bg-current rounded-sm"></div>
               <div className="bg-current rounded-sm"></div>
               <div className="bg-current rounded-sm"></div>
               <div className="bg-current rounded-sm"></div>
             </div>
-          </button>
-          <button
-            onClick={() => setViewMode('list')}
-            className={`p-2 rounded-md ${
-              viewMode === 'list' 
-                ? 'bg-blue-100 text-blue-600' 
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-          >
+          </ToggleGroupItem>
+          <ToggleGroupItem value="list" aria-label="List view">
             <div className="space-y-1 w-4 h-4">
               <div className="bg-current rounded-sm h-1"></div>
               <div className="bg-current rounded-sm h-1"></div>
               <div className="bg-current rounded-sm h-1"></div>
             </div>
-          </button>
-        </div>
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       {/* Favorites Grid/List */}
@@ -134,9 +125,7 @@ export function FavoritesList() {
         : 'space-y-4'
       }>
         {favorites.map((property) => (
-          <div key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
-            viewMode === 'list' ? 'flex' : ''
-          }`}>
+          <Card key={property.id} className={`${viewMode === 'list' ? 'flex' : ''} rounded-xl hover:shadow-lg transition-shadow duration-300`}>
             {/* Property Image */}
             <div className={`relative overflow-hidden ${
               viewMode === 'list' ? 'w-1/3 h-48' : 'h-48'
@@ -147,27 +136,25 @@ export function FavoritesList() {
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute top-3 left-3">
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                  property.type === 'rent' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'bg-green-500 text-white'
-                }`}>
+                <Badge className={`${property.type === 'rent' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'} border-none px-2 py-1 text-xs`}>
                   {property.type === 'rent' ? 'For Rent' : 'For Sale'}
-                </span>
+                </Badge>
               </div>
               <div className="absolute top-3 right-3 flex space-x-1">
-                <button 
+                <Button 
                   onClick={() => removeFavorite(property.id)}
-                  className="p-2 bg-white/80 rounded-full hover:bg-red-100 hover:text-red-600 transition-colors"
+                  size="icon"
+                  variant="ghost"
+                  className="p-2 bg-white/80 rounded-full hover:bg-red-100 hover:text-red-600"
                   title="Remove from favorites"
                 >
                   <Trash2 className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Property Details */}
-            <div className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
+            <CardContent className={`p-4 ${viewMode === 'list' ? 'flex-1' : ''}`}>
               <div className="flex items-center justify-between mb-2">
                 <h3 className="font-semibold text-gray-900 text-lg line-clamp-1">
                   {property.title}
@@ -210,35 +197,46 @@ export function FavoritesList() {
               </div>
 
               <div className="flex space-x-2">
-                <Link
-                  href={`/properties/${property.id}`}
-                  className="flex-1 text-center bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center"
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Details
+                <Link href={`/properties/${property.id}`} className="flex-1">
+                  <Button className="w-full bg-blue-600 text-white hover:bg-blue-700">
+                    <Eye className="h-4 w-4 mr-2" />
+                    View Details
+                  </Button>
                 </Link>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center">
+                <Button variant="outline" className="px-4">
                   <MessageCircle className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
       {/* Actions */}
       <div className="mt-8 text-center">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link
-            href="/properties"
-            className="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-colors font-medium"
-          >
-            Browse More Properties
+          <Link href="/properties">
+            <Button variant="outline" className="px-6 py-3 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+              Browse More Properties
+            </Button>
           </Link>
-          <button className="inline-flex items-center px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium">
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear All Favorites
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button className="px-6 py-3 bg-gray-600 text-white hover:bg-gray-700">
+                <Trash2 className="h-4 w-4 mr-2" />
+                Clear All Favorites
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Clear all favorites?</AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={() => setFavorites([])}>Clear</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </div>
