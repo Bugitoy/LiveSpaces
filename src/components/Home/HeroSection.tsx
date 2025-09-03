@@ -135,7 +135,7 @@ export function HeroSection() {
                 
                 <Dialog open={searchModalOpen} onOpenChange={setSearchModalOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="outline" className="px-6 py-4 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300">
+                    <Button variant="outline" className="px-6 py-4 bg-transparent border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300">
                       <Filter className="h-5 w-5 mr-2" />
                       Advanced Search
                     </Button>
@@ -312,12 +312,12 @@ export function HeroSection() {
           transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
           className="mt-12 flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <Button asChild size="lg" className="px-8 py-4 bg-white text-gray-900 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+          <Button asChild size="lg" className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
             <Link href="/properties">
               Browse Properties
             </Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+          <Button asChild size="lg" variant="outline" className="px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
             <Link href="/map">
               View on Map
             </Link>

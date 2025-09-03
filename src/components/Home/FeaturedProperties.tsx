@@ -275,12 +275,12 @@ export function FeaturedProperties() {
                 Our extensive database has thousands more properties. Use our advanced search to find your perfect match.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="px-8 py-4 bg-white text-gray-900 rounded-xl font-semibold text-lg hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <Button asChild size="lg" className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
                   <Link href="/properties">
                     Browse All Properties
                   </Link>
                 </Button>
-                <Button asChild size="lg" variant="outline" className="px-8 py-4 border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+                <Button asChild size="lg" variant="outline" className="px-8 py-4 bg-transparent border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
                   <Link href="/map">
                     Explore on Map
                   </Link>

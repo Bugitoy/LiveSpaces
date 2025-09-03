@@ -216,7 +216,7 @@ export function FavoritesList() {
       <div className="mt-8 text-center">
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link href="/properties">
-            <Button variant="outline" className="px-6 py-3 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white">
+            <Button variant="outline" className="px-6 py-3 bg-transparent border-2 border-white/30 text-white hover:bg-white/10">
               Browse More Properties
             </Button>
           </Link>
