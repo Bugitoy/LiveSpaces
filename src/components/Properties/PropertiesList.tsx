@@ -285,17 +285,27 @@ export function PropertiesList({ filters }: PropertiesListProps) {
           <Card key={property.id} className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 ${
             viewMode === 'list' ? 'flex' : ''
           }`}>
-            {/* Property Image Carousel */}
+            {/* Property Image */}
             <div className={`relative overflow-hidden ${
               viewMode === 'list' ? 'w-1/3' : ''
             }`}>
-              <AspectRatio ratio={16/9}>
-                <img
-                  src={property.images[imageIndices[property.id] || 0]}
-                  alt={property.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                />
-              </AspectRatio>
+              {viewMode === 'list' ? (
+                <div className="relative h-full min-h-[12rem]">
+                  <img
+                    src={property.images[imageIndices[property.id] || 0]}
+                    alt={property.title}
+                    className="absolute inset-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              ) : (
+                <AspectRatio ratio={16/9}>
+                  <img
+                    src={property.images[imageIndices[property.id] || 0]}
+                    alt={property.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </AspectRatio>
+              )}
               
               {/* Carousel Navigation Arrows */}
               {property.images.length > 1 && (
