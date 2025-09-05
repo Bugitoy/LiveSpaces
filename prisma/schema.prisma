@@ -21,6 +21,156 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Relations
+  properties            Property[]
+  favorites             Favorite[]
+  conversationsAsSeller Conversation[] @relation("UserAsSeller")
+  conversationsAsBuyer  Conversation[] @relation("UserAsBuyer")
+  messages              Message[]
 }
 
+
+// -----------------------------
+// Enums
+// -----------------------------
+
+enum ListingKind {
+  RENT
+  SALE
+}
+
+enum ListingStatus {
+  ACTIVE
+  PENDING
+  SOLD
+  RENTED
+}
+
+enum LeaseDuration {
+  ONE_MONTH
+  SIX_MONTHS
+  ONE_YEAR
+  RENT_TO_OWN
+  SUBLET
+  NA
+}
+
+enum ContactRole {
+  OWNER
+  COMPANY
+}
+
+// -----------------------------
+// Models
+// -----------------------------
+
+model Property {
+  id            String         @id @default(cuid()) @map("_id")
+  title         String
+  listingKind   ListingKind
+  status        ListingStatus  @default(ACTIVE)
+  // Pricing
+  price         Int            // normalized value used in lists/detail (monthly for RENT, total for SALE)
+  monthlyRent   Int?
+  salePrice     Int?
+  // Location & address
+  address       String
+  city          String
+  latitude      Float
+  longitude     Float
+  showAddress   Boolean        @default(true)
+  // Specs
+  bedrooms      Int
+  bathrooms     Float          // supports values like 2.5
+  area          Int            // square feet/meters
+  yearBuilt     Int?
+  // Content
+  description   String
+  upgrades      String?
+  amenities     String[]
+  images        String[]
+  features      String[]
+  // Availability
+  availableFrom DateTime?
+  leaseDuration LeaseDuration  @default(NA)
+  leaseDescription String?
+  // Deposits (rent only)
+  chargeSecurityDeposit Boolean   @default(false)
+  securityDepositAmount  Int?
+  // Engagement
+  views         Int            @default(0)
+  featured      Boolean        @default(false)
+  rating        Float?         @default(0)
+  reviewCount   Int?           @default(0)
+  // Ownership
+  ownerId       String?
+  owner         User?          @relation(fields: [ownerId], references: [id])
+  // Contact
+  contactRole   ContactRole    @default(OWNER)
+  contactName   String
+  contactEmail  String
+  contactPhone  String?
+  allowPhone    Boolean        @default(true)
+
+  // Messaging
+  conversations Conversation[]
+  favorites     Favorite[]
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([listingKind, status, city])
+  @@index([ownerId])
+}
+
+model Favorite {
+  id         String   @id @default(cuid()) @map("_id")
+  userId     String
+  propertyId String
+
+  user       User     @relation(fields: [userId], references: [id])
+  property   Property @relation(fields: [propertyId], references: [id])
+
+  createdAt  DateTime @default(now())
+
+  @@unique([userId, propertyId])
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Conversation {
+  id           String      @id @default(cuid()) @map("_id")
+  propertyId   String?
+  sellerId     String
+  buyerId      String
+  lastMessageAt DateTime?
+
+  property     Property?   @relation(fields: [propertyId], references: [id])
+  seller       User        @relation("UserAsSeller", fields: [sellerId], references: [id])
+  buyer        User        @relation("UserAsBuyer", fields: [buyerId], references: [id])
+  messages     Message[]
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([propertyId])
+}
+
+model Message {
+  id             String       @id @default(cuid()) @map("_id")
+  conversationId String
+  senderId       String
+  content        String
+  read           Boolean      @default(false)
+  sentAt         DateTime     @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  sender         User         @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId])
+  @@index([senderId])
+}
 
